@@ -1,0 +1,143 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+
+android {
+    compileSdkVersion 27
+    //buildToolsVersion '23.0.0'
+
+    defaultConfig {
+//        applicationId "com.src.cy.zfapi"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+}
+
+// ext is a gradle closure allowing the declaration of global properties
+//ext {
+//    PUBLISH_GROUP_ID = 'com.cy.zfapi'
+//    PUBLISH_ARTIFACT_ID = 'zfapi'
+//    PUBLISH_VERSION = android.defaultConfig.versionName
+//}
+//
+//uploadArchives {
+//    repositories.mavenDeployer {
+//        def deployPath = file(getProperty('aar.deployPath'))
+//        repository(url: "file://${deployPath.absolutePath}")
+//        pom.project {
+//            groupId project.PUBLISH_GROUP_ID
+//            artifactId project.PUBLISH_ARTIFACT_ID
+//            version project.PUBLISH_VERSION
+//        }
+//    }
+//}
+
+
+//=============================
+
+group = 'com.cy.api'
+version = '1.0'
+
+def siteUrl = 'https://github.com/tmxdyf/Api'
+def gitUrl = 'https://github.com/tmxdyf/Api.git'
+
+def bintray_user='tmxdyf'
+def bintray_api_key=''
+
+bintray {
+    user = bintray_user
+    key = bintray_api_key
+
+    configurations = ['archives'] //When uploading configuration files
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'Bintray aar publishing example'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/bintray/bintray-examples/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'example']
+        publicDownloadNumbers = true
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'Bintray publish Gradle aar example'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'tmxdyf'
+                        name 'tmxdyf'
+                        email 'tmxdyf@163.com'
+                    }
+                }
+                scm {
+                    connection 'https://github.com/tmxdyf/Api.git'
+                    developerConnection 'https://github.com/tmxdyf/Api.git'
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+artifacts {
+//    archives javadocJar
+    archives sourcesJar
+}
+
+task findConventions << {
+    println project.getConvention()
+}
